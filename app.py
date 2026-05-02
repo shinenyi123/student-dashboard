@@ -55,6 +55,8 @@ def insert_data():
     conn = sqlite3.connect(DATABASE_PATH)
     cursor = conn.cursor()
     cursor.execute("DELETE FROM students")
+    conn.commit()
+    conn.close()
     df = pd.read_excel(excel_file)
     df.columns = df.columns.str.strip()
     for _, row in df.iterrows():
