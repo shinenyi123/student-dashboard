@@ -1,7 +1,6 @@
-from tarfile import data_filter
 import os
 from datetime import datetime
-from flask import Flask, render_template, redirect, url_for ,request
+from flask import Flask, render_template, redirect, url_for ,request,send_file
 import sqlite3 
 import pandas as pd 
 app = Flask(__name__)   
@@ -102,6 +101,10 @@ def view_data():
                                data_all=len(data),
                                age=age_html, age_1=age_html_1, age_2=age_html_2,
                                class_html=class_html, gender=gender_html)
+    elif action_html == 'excel_download':
+        df = pd.DataFrame(data)
+        df.to_excel(filename+'.xlsx', index=False)
+        return send_file(filename+'.xlsx', as_attachment=True)
 
     return render_template('try.html')
 
