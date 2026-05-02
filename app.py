@@ -7,11 +7,14 @@ from datetime import datetime
 app = Flask(__name__)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-EXCEL_PATH_OUTPUT = os.path.join(BASE_DIR, "excel_output")
 DATABASE_PATH = os.path.join(BASE_DIR, "database", "students.db")
 
-# Ensure output folder exists
-os.makedirs(EXCEL_PATH_OUTPUT, exist_ok=True)
+import os
+
+EXCEL_PATH_OUTPUT = os.path.join(BASE_DIR, "excel_output")
+
+if not os.path.isdir(EXCEL_PATH_OUTPUT):
+    os.makedirs(EXCEL_PATH_OUTPUT)
 
 def create_table():
     conn = sqlite3.connect(DATABASE_PATH)
