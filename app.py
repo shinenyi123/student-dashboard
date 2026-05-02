@@ -1,20 +1,13 @@
+from tarfile import data_filter
 import os
-import sqlite3
-import pandas as pd
-from flask import Flask, render_template, redirect, url_for, request, send_file
 from datetime import datetime
-
-app = Flask(__name__)
+from flask import Flask, render_template, redirect, url_for ,request
+import sqlite3 
+import pandas as pd 
+app = Flask(__name__)   
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATABASE_PATH = os.path.join(BASE_DIR, "database", "students.db")
-
-import os
-
-EXCEL_PATH_OUTPUT = os.path.join(BASE_DIR, "excel_output")
-
-if not os.path.isdir(EXCEL_PATH_OUTPUT):
-    os.makedirs(EXCEL_PATH_OUTPUT)
 
 def create_table():
     conn = sqlite3.connect(DATABASE_PATH)
@@ -111,20 +104,6 @@ def view_data():
                                data_all=len(data),
                                age=age_html, age_1=age_html_1, age_2=age_html_2,
                                class_html=class_html, gender=gender_html)
-
-    elif action_html == 'save_file':
-        df = pd.DataFrame({
-            'စဉ်': [r[0] for r in data],
-            'ကျောင်းဝင်အမှတ်': [r[1] for r in data],
-            'နံမည်': [r[2] for r in data],
-            'ကျားမ': [r[3] for r in data],
-            'အဖေနံမည်': [r[4] for r in data],
-            'မွေးနေ့': [r[5] for r in data],
-            'အသက်': [r[7] for r in data]
-        })
-        file_path = os.path.join(EXCEL_PATH_OUTPUT, filename + ".xlsx")
-        df.to_excel(file_path, index=False)
-        return send_file(file_path, as_attachment=True)
 
     return render_template('try.html')
 
