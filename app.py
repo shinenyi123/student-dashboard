@@ -11,6 +11,7 @@ DATABASE_PATH = os.path.join(BASE_DIR, "database", "students.db")
 
 def create_table():
     conn = sqlite3.connect(DATABASE_PATH)
+    conn.execute("PRAGMA journal_mode=WAL;")
     cursor = conn.cursor()
     cursor.execute(""" CREATE TABLE IF NOT EXISTS students
                 ( id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -52,25 +53,22 @@ def home():
 @app.route('/insert', methods=['POST'])
 def insert_data():
     excel_file = request.files['myfile']
-    conn = sqlite3.connect(DATABASE_PATH ,timeout=10)
-    cursor = conn.cursor()
-    cursor.execute("DELETE FROM students")
-    df = pd.read_excel(excel_file)
-    df.columns = df.columns.str.strip()
-    for _, row in df.iterrows():
-        no        = row['စဉ်']
-        school_no = row['ကျောင်းဝင်အမှတ်']
-        name      = row['နံမည်']
-        gender    = row['ကျားမ']
-        f_name    = row['အဖေနံမည်']
-        birthday  = pd.to_datetime(row['မွေးနေ့']).strftime('%Y-%m-%d')
-        class_name = row['class']
-        cursor.execute(""" INSERT OR IGNORE INTO students 
+    with sqlite3.connect(DATABASE_PATH, timeout=15) as conn:
+        cursor = conn.cursor()
+    
+        cursor.execute("DELETE FROM students")
+    
+        df = pd.read_excel(excel_file)
+        df.columns = df.columns.str.strip()
+    
+        for _, row in df.iterrows():
+            cursor.execute(""" INSERT OR IGNORE INTO students 
             (စဉ်,ကျောင်းဝင်အမှတ်,နံမည်,ကျားမ,အဖေနံမည်,မွေးနေ့,class) 
             VALUES (?, ?, ?, ?, ?, ?, ?) """,
-            (no, school_no, name, gender, f_name, birthday, class_name))
-    conn.commit()
-    conn.close()
+            (row['စဉ်'], row['ကျောင်းဝင်အမှတ်'], row['နံမည်'],
+             row['ကျားမ'], row['အဖေနံမည်'],
+             pd.to_datetime(row['မွေးနေ့']).strftime('%Y-%m-%d'),
+             row['class']))
     return redirect(url_for('home'))
 
 @app.route('/view_tb', methods=['POST'])
@@ -83,7 +81,7 @@ def view_data():
     filename   = request.form.get('file_name')
     action_html = request.form.get('on')
 
-    conn = sqlite3.connect(DATABASE_PATH)
+    conn = sqlite3.connect(DATABASE_PATH, timeout=10)
     cursor = conn.cursor()
     cursor.execute("SELECT စဉ်, ကျောင်းဝင်အမှတ်, နံမည်, ကျားမ, အဖေနံမည်, မွေးနေ့ ,class FROM students")
     rows = cursor.fetchall()
