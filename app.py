@@ -14,7 +14,7 @@ def create_table():
     cursor = conn.cursor()
     cursor.execute(""" CREATE TABLE IF NOT EXISTS students
                 ( id INTEGER PRIMARY KEY AUTOINCREMENT,
-                စဉ် INTEGER,
+                စဉ် TEXT,
                 ကျောင်းဝင်အမှတ် INTEGER,
                 နံမည် TEXT,
                 အဖေနံမည် TEXT,
@@ -22,6 +22,7 @@ def create_table():
                 မွေးနေ့ TEXT,
                 class TEXT,
                 UNIQUE(ကျောင်းဝင်အမှတ်) ) """)
+    
     conn.commit()
     conn.close()
 
@@ -45,6 +46,17 @@ def apply_filters(data_age, class_html, gender_html, age_html, age_html_1, age_h
         data = [row for row in data if int(age_html_1) <= int(row[7]) <= int(age_html_2)]
     return data
 
+def eng_to_mm(number):
+    eng_digits = ['0','1','2','3','4','5','6','7','8','9']
+    mm_digits = ['၀','၁','၂','၃','၄','၅','၆','၇','၈','၉']
+    number_list = []
+    for num in number:
+        for eng,mm in zip(eng_digits,mm_digits):
+            if num == eng:
+                number_list.append(mm)
+
+    return ''.join(number_list)
+
 @app.route('/')
 def home():
     return render_template('try.html')
@@ -57,7 +69,8 @@ def insert_data():
     
         cursor.execute("DELETE FROM students")
     
-        df = pd.read_excel(excel_file)
+        df = pd.read_excel(excel_file,dtype={'စဉ်':str})
+        df['စဉ်'] = df['စဉ်'].apply(eng_to_mm)
         df.columns = df.columns.str.strip()
     
         for _, row in df.iterrows():
