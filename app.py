@@ -14,7 +14,7 @@ def create_table():
     cursor = conn.cursor()
     cursor.execute(""" CREATE TABLE IF NOT EXISTS students
                 ( id INTEGER PRIMARY KEY AUTOINCREMENT,
-                စဉ် TEXT,
+                စဉ် INTEGER,
                 ကျောင်းဝင်အမှတ် INTEGER,
                 နံမည် TEXT,
                 အဖေနံမည် TEXT,
