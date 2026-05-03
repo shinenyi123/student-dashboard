@@ -102,7 +102,20 @@ def view_data():
                                age=age_html, age_1=age_html_1, age_2=age_html_2,
                                class_html=class_html, gender=gender_html)
     elif action_html == 'excel_download':
-        df = pd.DataFrame(data)
+        download_data = [
+            {
+                'စဉ်': r[0],
+                'ကျောင်းဝင်အမှတ်': r[1],
+                'နံမည်': r[2],
+                'ကျားမ': r[3],
+                'အဖေနံမည်': r[4],
+                'မွေးနေ့': r[5],
+                'class': r[6],
+                'အသက်': r[7]
+            }
+            for r in data
+        ]
+        df = pd.DataFrame(download_data)
         df.to_excel(filename+'.xlsx', index=False)
         return send_file(filename+'.xlsx', as_attachment=True)
 
