@@ -28,7 +28,7 @@ def create_table():
 create_table()
 
 def calculate_age(dob_str):
-    dob = datetime.strptime(dob_str, "%Y-%m-%d")
+    dob = datetime.strptime(dob_str, "%d-%m-%Y")
     today = datetime.today()
     age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
     return age
@@ -64,10 +64,13 @@ def insert_data():
             cursor.execute(""" INSERT OR IGNORE INTO students 
             (စဉ်,ကျောင်းဝင်အမှတ်,နံမည်,ကျားမ,အဖေနံမည်,မွေးနေ့,class) 
             VALUES (?, ?, ?, ?, ?, ?, ?) """,
-            (row['စဉ်'], row['ကျောင်းဝင်အမှတ်'], row['နံမည်'],
-             row['ကျားမ'], row['အဖေနံမည်'],
-             pd.to_datetime(row['မွေးနေ့']).strftime('%Y-%m-%d'),
-             row['class']))
+           (row['စဉ်'],
+            row['ကျောင်းဝင်အမှတ်'],
+            row['နံမည်'],
+            row['ကျားမ'],
+            row['အဖေနံမည်'],
+            pd.to_datetime(row['မွေးနေ့']).strftime('%d-%m-%Y'),
+            row['class']))
     return redirect(url_for('home'))
 
 @app.route('/view_tb', methods=['POST'])
@@ -112,8 +115,7 @@ def view_data():
                 'မွေးနေ့': r[5],
                 'class': r[6],
                 'အသက်': r[7]
-            }
-            for r in data
+            }for r in data 
         ]
         df = pd.DataFrame(download_data)
         df.to_excel(filename+'.xlsx', index=False)
