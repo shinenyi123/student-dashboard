@@ -16,8 +16,8 @@ def create_table():
                 ( id INTEGER PRIMARY KEY AUTOINCREMENT,
                 စဉ် TEXT,
                 ကျောင်းဝင်အမှတ် INTEGER,
-                နံမည် TEXT,
-                အဖေနံမည် TEXT,
+                နာမည် TEXT,
+                အဖေနာမည် TEXT,
                 ကျားမ TEXT,
                 မွေးနေ့ TEXT,
                 class TEXT,
@@ -75,13 +75,13 @@ def insert_data():
     
         for _, row in df.iterrows():
             cursor.execute(""" INSERT OR IGNORE INTO students 
-            (စဉ်,ကျောင်းဝင်အမှတ်,နံမည်,ကျားမ,အဖေနံမည်,မွေးနေ့,class) 
+            (စဉ်,ကျောင်းဝင်အမှတ်,နာမည်,ကျားမ,အဖေနာမည်,မွေးနေ့,class) 
             VALUES (?, ?, ?, ?, ?, ?, ?) """,
            (row['စဉ်'],
             row['ကျောင်းဝင်အမှတ်'],
-            row['နံမည်'],
+            row['နာမည်'],
             row['ကျားမ'],
-            row['အဖေနံမည်'],
+            row['အဖေနာမည်'],
             pd.to_datetime(row['မွေးနေ့']).strftime('%d-%m-%Y'),
             row['class']))
     return redirect(url_for('home'))
@@ -98,10 +98,10 @@ def view_data():
 
     conn = sqlite3.connect(DATABASE_PATH, timeout=10)
     cursor = conn.cursor()
-    cursor.execute("SELECT စဉ်, ကျောင်းဝင်အမှတ်, နံမည်, ကျားမ, အဖေနံမည်, မွေးနေ့ ,class FROM students")
+    cursor.execute("SELECT စဉ်, ကျောင်းဝင်အမှတ်, နာမည်, ကျားမ, အဖေနာမည်, မွေးနေ့ ,class FROM students")
     rows = cursor.fetchall()
     conn.close()
-
+    
     data_age = []
     for row in rows:
         no, roll, name, gender, father, dob, class_name = row
@@ -122,9 +122,9 @@ def view_data():
             {
                 'စဉ်': r[0],
                 'ကျောင်းဝင်အမှတ်': r[1],
-                'နံမည်': r[2],
+                'နာမည်': r[2],
                 'ကျားမ': r[3],
-                'အဖေနံမည်': r[4],
+                'အဖေနာမည်': r[4],
                 'မွေးနေ့': r[5],
                 'class': r[6],
                 'အသက်': r[7]
