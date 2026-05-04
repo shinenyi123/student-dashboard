@@ -52,7 +52,9 @@ def eng_to_mm(number):
     number_list = []
     for num in number:
         for eng,mm in zip(eng_digits,mm_digits):
-            if num == eng:
+            if num == mm:
+                number_list.append(num)
+            elif num == eng:
                 number_list.append(mm)
 
     return ''.join(number_list)
