@@ -15,7 +15,7 @@ def create_table():
     cursor.execute(""" CREATE TABLE IF NOT EXISTS students
                 ( id INTEGER PRIMARY KEY AUTOINCREMENT,
                 စဉ် TEXT,
-                ကျောင်းဝင်အမှတ် INTEGER,
+                ကျောင်းဝင်အမှတ် TEXT,
                 နာမည် TEXT,
                 အဖေနာမည် TEXT,
                 ကျားမ TEXT,
@@ -69,8 +69,9 @@ def insert_data():
     
         cursor.execute("DELETE FROM students")
     
-        df = pd.read_excel(excel_file,dtype={'စဉ်':str})
+        df = pd.read_excel(excel_file,dtype={'စဉ်':str,'ကျောင်းဝင်အမှတ်':str})
         df['စဉ်'] = df['စဉ်'].apply(eng_to_mm)
+        df['ကျောင်းဝင်အမှတ်'] = df['ကျောင်းဝင်အမှတ်'].apply(eng_to_mm)
         df.columns = df.columns.str.strip()
     
         for _, row in df.iterrows():
