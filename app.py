@@ -134,8 +134,24 @@ def view_data():
             }for r in data 
         ]
         df = pd.DataFrame(download_data)
-        df.to_excel(filename+'.xlsx', index=False)
-        return send_file(filename+'.xlsx', as_attachment=True)
+        excel_filename = filename + '.xlsx'
+        df.to_excel(excel_filename, index=False)
+        wb = os.load_workbook(excel_filename)
+        ws = wb.active
+        ws.column_dimensions['A'].width = 10
+        ws.column_dimensions['B'].width = 20
+        ws.column_dimensions['C'].width = 30
+        ws.column_dimensions['D'].width = 10
+        ws.column_dimensions['E'].width = 20
+        ws.column_dimensions['F'].width = 15
+        ws.column_dimensions['G'].width = 10
+        ws.column_dimensions['H'].width = 10
+
+        for row in ws.iter_row():
+            ws.row_dimensions[row[0].row].height = 20
+            
+        wb.save(excel_filename)
+        return send_file(excel_filename, as_attachment=True)
 
     return render_template('try.html')
 
