@@ -1,4 +1,5 @@
 import os
+from openpyxl import load_workbook
 from datetime import datetime
 from flask import Flask, render_template, redirect, url_for ,request,send_file
 import sqlite3 
@@ -136,7 +137,7 @@ def view_data():
         df = pd.DataFrame(download_data)
         excel_filename = filename + '.xlsx'
         df.to_excel(excel_filename, index=False)
-        wb = os.load_workbook(excel_filename)
+        wb = load_workbook(excel_filename)
         ws = wb.active
         ws.column_dimensions['A'].width = 10
         ws.column_dimensions['B'].width = 20
@@ -147,7 +148,7 @@ def view_data():
         ws.column_dimensions['G'].width = 10
         ws.column_dimensions['H'].width = 10
 
-        for row in ws.iter_row():
+        for row in ws.iter_rows():
             ws.row_dimensions[row[0].row].height = 20
             
         wb.save(excel_filename)
