@@ -1,9 +1,11 @@
 import os
 from openpyxl import load_workbook
+from openpyxl.styles import Alignment
 from datetime import datetime
 from flask import Flask, render_template, redirect, url_for ,request,send_file
 import sqlite3 
 import pandas as pd 
+
 app = Flask(__name__)   
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -98,6 +100,8 @@ def view_data():
     class_html = request.form.get('class')
     gender_html = request.form.get('gender')
     filename   = request.form.get('file_name')
+    file_type = request.form.get('file_type')
+    school_name = request.form.get('school_name')
     action_html = request.form.get('on')
 
     conn = sqlite3.connect(DATABASE_PATH, timeout=10)
@@ -122,37 +126,105 @@ def view_data():
                                age=age_html, age_1=age_html_1, age_2=age_html_2,
                                class_html=class_html, gender=gender_html)
     elif action_html == 'excel_download':
-        download_data = [
-            {
-                'စဉ်': r[0],
-                'ကျောင်းဝင်အမှတ်': r[1],
-                'နာမည်': r[2],
-                'ကျားမ': r[3],
-                'အဖေနာမည်': r[4],
-                'မွေးနေ့': r[5],
-                'class': r[6],
-                'အသက်': r[7]
-            }for r in data 
-        ]
-        df = pd.DataFrame(download_data)
-        excel_filename = filename + '.xlsx'
-        df.to_excel(excel_filename, index=False)
-        wb = load_workbook(excel_filename)
-        ws = wb.active
-        ws.column_dimensions['A'].width = 10
-        ws.column_dimensions['B'].width = 20
-        ws.column_dimensions['C'].width = 30
-        ws.column_dimensions['D'].width = 10
-        ws.column_dimensions['E'].width = 20
-        ws.column_dimensions['F'].width = 15
-        ws.column_dimensions['G'].width = 10
-        ws.column_dimensions['H'].width = 10
+        if file_type == 'normal':
+            download_data = [
+                {
+                    'စဉ်': r[0],
+                    'ကျောင်းဝင်အမှတ်': r[1],
+                    'နာမည်': r[2],
+                    'ကျားမ': r[3],
+                    'အဖေနာမည်': r[4],
+                    'မွေးနေ့': r[5],
+                    'class': r[6],
+                    'အသက်': r[7]
+                }for r in data 
+            ]
+            df = pd.DataFrame(download_data)
+            excel_filename = filename + '.xlsx'
+            df.to_excel(excel_filename, index=False)
+            wb = load_workbook(excel_filename)
+            ws = wb.active
+            ws.column_dimensions['A'].width = 10 #စဉ်
+            ws.column_dimensions['B'].width = 20 #ကျောင်းဝင်အမှတ်
+            ws.column_dimensions['C'].width = 30 #နာမည်
+            ws.column_dimensions['D'].width = 10 #ကျားမ
+            ws.column_dimensions['E'].width = 30 #အဖေနာမည်
+            ws.column_dimensions['F'].width = 15 #မွေးနေ့
+            ws.column_dimensions['G'].width = 15 #class
+            ws.column_dimensions['H'].width = 10 #အသက်
 
-        for row in ws.iter_rows():
-            ws.row_dimensions[row[0].row].height = 20
+            for row in ws.iter_rows():
+                ws.row_dimensions[row[0].row].height = 10
             
-        wb.save(excel_filename)
-        return send_file(excel_filename, as_attachment=True)
+            for cell in ws[1]:
+                cell.alignment = Alignment(horizontal='center', vertical='center')
+            
+            for row in ws.iter_rows(min_row=2):
+                row[0].alignment = Alignment(horizontal='center', vertical='center') #စဉ်
+                row[1].alignment = Alignment(horizontal='center', vertical='center') #ကျောင်းဝင်အမှတ်
+                row[2].alignment = Alignment(horizontal='left', vertical='center')  #နာမည်
+                row[3].alignment = Alignment(horizontal='center', vertical='center') #ကျားမ
+                row[4].alignment = Alignment(horizontal='left', vertical='center')  #အဖေနာမည်
+                row[5].alignment = Alignment(horizontal='center', vertical='center') #မွေးနေ့
+                row[6].alignment = Alignment(horizontal='center', vertical='center') #class
+                row[7].alignment = Alignment(horizontal='center', vertical='center') #အသက်
+
+            wb.save(excel_filename)
+
+            return send_file(excel_filename, as_attachment=True)
+        elif file_type == 'normalized':
+            no, school_name, roll, name, gender, father, dob, reasion_ = [], [], [], [], [], [], [], []
+            for x in data:
+                no.append(x[0])
+                school_name.append(school_name)
+                roll.append(x[2])
+                name.append(x[3])
+                gender.append(x[4])
+                father.append(x[5])
+                dob.append(x[6])
+                reasion_.append('')
+
+            download_data = {
+                'စဉ်': no,
+                'ကျောင်းအမည်': school_name,
+                'ကျောင်းဝင်အမှတ်': roll,
+                'နာမည်': name,
+                'ကျားမ': gender,
+                'အဖေနာမည်': father,
+                'မွေးနေ့': dob,
+                'အကြောင်းအရာ': reasion_
+            }
+            df = pd.DataFrame(download_data)
+            excel_filename = filename + '_normalized.xlsx'
+            df.to_excel(excel_filename, index=False)
+            wb = load_workbook(excel_filename)
+            ws = wb.active
+            ws.column_dimensions['A'].width = 5 #စဉ်
+            ws.column_dimensions['B'].width = 20 #ကျောင်းအမည်
+            ws.column_dimensions['C'].width = 20 #ကျောင်းဝင်အမှတ်
+            ws.column_dimensions['D'].width = 25 #နာမည်
+            ws.column_dimensions['E'].width = 10 #ကျားမ
+            ws.column_dimensions['F'].width = 20 #အဖေနာမည်
+            ws.column_dimensions['G'].width = 15 #မွေးနေ့
+            ws.column_dimensions['H'].width = 15 #အကြောင်းအရာ
+
+            for row in ws.iter_rows():
+                ws.row_dimensions[row[0].row].height = 10
+            
+            for cell in ws[1]:
+                cell.alignment = Alignment(horizontal='center', vertical='center')
+            
+            for row in ws.iter_rows(min_row=2):
+                row[0].alignment = Alignment(horizontal='center', vertical='center')  #စဉ်
+                row[1].alignment = Alignment(horizontal='left', vertical='center')    #ကျောင်းအမည်
+                row[2].alignment = Alignment(horizontal='center', vertical='center')  #ကျောင်းဝင်အမှတ်
+                row[3].alignment = Alignment(horizontal='left', vertical='center')    #နာမည်
+                row[4].alignment = Alignment(horizontal='center', vertical='center')  #ကျားမ
+                row[5].alignment = Alignment(horizontal='left', vertical='center')    #အဖေနာမည်
+                row[6].alignment = Alignment(horizontal='center', vertical='center')  #မွေးနေ့
+                row[7].alignment = Alignment(horizontal='left', vertical='center')    #အကြောင်းအရာ
+            wb.save(excel_filename)
+            return send_file(excel_filename, as_attachment=True)
 
     return render_template('try.html')
 
