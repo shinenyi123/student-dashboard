@@ -146,12 +146,12 @@ def view_data():
             ws = wb.active
             ws.column_dimensions['A'].width = 3 #စဉ်
             ws.column_dimensions['B'].width = 17 #ကျောင်းဝင်အမှတ်
-            ws.column_dimensions['C'].width = 25 #နာမည်
-            ws.column_dimensions['D'].width = 4 #ကျားမ
-            ws.column_dimensions['E'].width = 24 #အဖေနာမည်
+            ws.column_dimensions['C'].width = 20 #နာမည်
+            ws.column_dimensions['D'].width = 6 #ကျားမ
+            ws.column_dimensions['E'].width = 20 #အဖေနာမည်
             ws.column_dimensions['F'].width = 15 #မွေးနေ့
-            ws.column_dimensions['G'].width = 4 #class
-            ws.column_dimensions['H'].width = 4 #အသက်
+            ws.column_dimensions['G'].width = 6 #class
+            ws.column_dimensions['H'].width = 6 #အသက်
 
             for row in ws.iter_rows():
                 ws.row_dimensions[row[0].row].height = 20
