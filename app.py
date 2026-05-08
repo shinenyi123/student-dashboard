@@ -144,17 +144,17 @@ def view_data():
             df.to_excel(excel_filename, index=False)
             wb = load_workbook(excel_filename)
             ws = wb.active
-            ws.column_dimensions['A'].width = 10 #စဉ်
-            ws.column_dimensions['B'].width = 20 #ကျောင်းဝင်အမှတ်
-            ws.column_dimensions['C'].width = 30 #နာမည်
-            ws.column_dimensions['D'].width = 10 #ကျားမ
-            ws.column_dimensions['E'].width = 30 #အဖေနာမည်
+            ws.column_dimensions['A'].width = 3 #စဉ်
+            ws.column_dimensions['B'].width = 17 #ကျောင်းဝင်အမှတ်
+            ws.column_dimensions['C'].width = 25 #နာမည်
+            ws.column_dimensions['D'].width = 4 #ကျားမ
+            ws.column_dimensions['E'].width = 24 #အဖေနာမည်
             ws.column_dimensions['F'].width = 15 #မွေးနေ့
-            ws.column_dimensions['G'].width = 15 #class
-            ws.column_dimensions['H'].width = 10 #အသက်
+            ws.column_dimensions['G'].width = 4 #class
+            ws.column_dimensions['H'].width = 4 #အသက်
 
             for row in ws.iter_rows():
-                ws.row_dimensions[row[0].row].height = 10
+                ws.row_dimensions[row[0].row].height = 20
             
             for cell in ws[1]:
                 cell.alignment = Alignment(horizontal='center', vertical='center')
