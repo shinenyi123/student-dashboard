@@ -1,6 +1,7 @@
 import os
 from openpyxl import load_workbook
-from openpyxl.styles import Alignment,Border, Side, Font
+from openpyxl.styles import Alignment,Border, Side, Font, PatternFill
+from openpyxl.worksheet.page import PageMargins
 from datetime import datetime
 from flask import Flask, render_template, redirect, url_for ,request,send_file
 import sqlite3 
@@ -240,6 +241,115 @@ def view_data():
 
             for cell in ws[1]:
                 cell.font = bold_font
+
+            ws.insert_rows(1, amount=4)
+
+            ws['A1'] = "အစိုးရနည်းပညာအထက်တန်းကျောင်း"
+            ws['A2'] = "ကျောင်းသားစာရင်း"
+            ws['A3'] = "၂၀၂၆ - ၂၀၂၇ ပညာသင်နှစ်"
+            ws['A4'] = "Student Normalized Report"
+
+            ws.merge_cells('A1:H1')
+            ws.merge_cells('A2:H2')
+            ws.merge_cells('A3:H3')
+            ws.merge_cells('A4:H4')
+
+            # =========================
+            # HEADER STYLE
+            # =========================
+            for row in range(1, 5):
+                cell = ws[f'A{row}']
+
+                cell.alignment = Alignment(
+                    horizontal='center',
+                    vertical='center'
+                )
+
+                cell.font = Font(
+                    bold=True,
+                    size=14
+                )
+
+            # =========================
+            # TABLE HEADER STYLE
+            # =========================
+            header_fill = PatternFill(
+                start_color="D9EAD3",
+                end_color="D9EAD3",
+                fill_type="solid"
+            )
+
+            for cell in ws[5]:
+                cell.font = Font(bold=True)
+
+                cell.alignment = Alignment(
+                    horizontal='center',
+                    vertical='center'
+                )
+
+                cell.fill = header_fill
+
+            # =========================
+            # COLUMN WIDTH
+            # =========================
+            ws.column_dimensions['A'].width = 6
+            ws.column_dimensions['B'].width = 14
+            ws.column_dimensions['C'].width = 18
+            ws.column_dimensions['D'].width = 20
+            ws.column_dimensions['E'].width = 8
+            ws.column_dimensions['F'].width = 20
+            ws.column_dimensions['G'].width = 15
+            ws.column_dimensions['H'].width = 15
+
+            # =========================
+            # ROW HEIGHT
+            # =========================
+            for row in ws.iter_rows():
+                ws.row_dimensions[row[0].row].height = 22
+
+            # =========================
+            # ALIGNMENT
+            # =========================
+            for row in ws.iter_rows(min_row=6):
+
+                row[0].alignment = Alignment(horizontal='center', vertical='center')
+                row[1].alignment = Alignment(horizontal='left', vertical='center')
+                row[2].alignment = Alignment(horizontal='center', vertical='center')
+                row[3].alignment = Alignment(horizontal='left', vertical='center')
+                row[4].alignment = Alignment(horizontal='center', vertical='center')
+                row[5].alignment = Alignment(horizontal='left', vertical='center')
+                row[6].alignment = Alignment(horizontal='center', vertical='center')
+                row[7].alignment = Alignment(horizontal='left', vertical='center')
+
+            thin = Side(style='thin')
+
+            border = Border(
+                left=thin,
+                right=thin,
+                top=thin,
+                bottom=thin
+            )
+
+            for row in ws.iter_rows():
+                for cell in row:
+                    cell.border = border
+
+            ws.freeze_panes = 'A6'
+
+            ws.page_setup.paperSize = ws.PAPERSIZE_A4
+            ws.page_setup.orientation = 'portrait'
+
+            ws.page_margins = PageMargins(
+                left=0.3,
+                right=0.3,
+                top=0.5,
+                bottom=0.5
+            )
+
+            # print title row repeat
+            ws.print_title_rows = '1:5'
+
+            ws.print_options.horizontalCentered = True
 
             wb.save(excel_filename)
             return send_file(excel_filename, as_attachment=True)
