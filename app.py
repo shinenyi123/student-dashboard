@@ -199,8 +199,8 @@ def view_data():
             df.to_excel(excel_filename, index=False)
             wb = load_workbook(excel_filename)
             ws = wb.active
-            ws.column_dimensions['A'].width = 5 #စဉ်
-            ws.column_dimensions['B'].width = 18 #ကျောင်းအမည်
+            ws.column_dimensions['A'].width = 6 #စဉ်
+            ws.column_dimensions['B'].width = 14 #ကျောင်းအမည်
             ws.column_dimensions['C'].width = 18 #ကျောင်းဝင်အမှတ်
             ws.column_dimensions['D'].width = 24 #နာမည်
             ws.column_dimensions['E'].width = 8 #ကျားမ
