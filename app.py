@@ -1,6 +1,6 @@
 import os
 from openpyxl import load_workbook
-from openpyxl.styles import Alignment
+from openpyxl.styles import Alignment,Border, Side, Font
 from datetime import datetime
 from flask import Flask, render_template, redirect, url_for ,request,send_file
 import sqlite3 
@@ -223,6 +223,27 @@ def view_data():
                 row[5].alignment = Alignment(horizontal='left', vertical='center')    #အဖေနာမည်
                 row[6].alignment = Alignment(horizontal='center', vertical='center')  #မွေးနေ့
                 row[7].alignment = Alignment(horizontal='left', vertical='center')    #အကြောင်းအရာ
+
+            wb = load_workbook(excel_filename)
+            ws = wb.active
+            
+            thick = Side(style='thick')
+            border = Border(
+                left=thick,
+                right=thick,
+                top=thick,
+                bottom=thick
+            )
+
+            for row in ws.iter_rows():
+                for cell in row:
+                    cell.border = border
+
+            bold_font = Font(bold=True)
+
+            for cell in ws[1]:
+                cell.font = bold_font
+
             wb.save(excel_filename)
             return send_file(excel_filename, as_attachment=True)
 
