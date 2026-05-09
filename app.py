@@ -202,9 +202,9 @@ def view_data():
             ws.column_dimensions['A'].width = 6 #စဉ်
             ws.column_dimensions['B'].width = 14 #ကျောင်းအမည်
             ws.column_dimensions['C'].width = 18 #ကျောင်းဝင်အမှတ်
-            ws.column_dimensions['D'].width = 24 #နာမည်
+            ws.column_dimensions['D'].width = 22 #နာမည်
             ws.column_dimensions['E'].width = 8 #ကျားမ
-            ws.column_dimensions['F'].width = 24 #အဖေနာမည်
+            ws.column_dimensions['F'].width = 22 #အဖေနာမည်
             ws.column_dimensions['G'].width = 13 #မွေးနေ့
             ws.column_dimensions['H'].width = 15 #အကြောင်းအရာ
 
