@@ -2,6 +2,7 @@ import os
 from openpyxl import load_workbook
 from openpyxl.styles import Alignment,Border, Side, Font, PatternFill
 from openpyxl.worksheet.page import PageMargins
+from openpyxl.worksheet.pagebreak import Break
 from datetime import datetime
 from flask import Flask, render_template, redirect, url_for ,request,send_file
 import sqlite3 
@@ -305,7 +306,7 @@ def view_data():
             # ROW HEIGHT
             # =========================
             for row in ws.iter_rows():
-                ws.row_dimensions[row[0].row].height = 22
+                ws.row_dimensions[row[0].row].height = 20
 
             # =========================
             # ALIGNMENT
@@ -346,10 +347,18 @@ def view_data():
                 bottom=0.5
             )
 
-            # print title row repeat
             ws.print_title_rows = '1:5'
 
             ws.print_options.horizontalCentered = True
+
+            data_start_row = 6      # data starts at row 6
+            rows_per_page = 21
+
+            current_row = data_start_row + rows_per_page
+
+            while current_row <= ws.max_row:
+                ws.row_breaks.append(Break(id=current_row))
+                current_row += rows_per_page
 
             wb.save(excel_filename)
             return send_file(excel_filename, as_attachment=True)
