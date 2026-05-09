@@ -101,7 +101,7 @@ def view_data():
     gender_html = request.form.get('gender')
     filename   = request.form.get('file_name')
     file_type = request.form.get('file_type')
-    school_name = request.form.get('school_name')
+    school_name_html = request.form.get('school_name')
     action_html = request.form.get('on')
 
     conn = sqlite3.connect(DATABASE_PATH, timeout=10)
@@ -176,12 +176,12 @@ def view_data():
             no, school_name, roll, name, gender, father, dob, reasion_ = [], [], [], [], [], [], [], []
             for x in data:
                 no.append(x[0])
-                school_name.append(school_name)
-                roll.append(x[2])
-                name.append(x[3])
-                gender.append(x[4])
-                father.append(x[5])
-                dob.append(x[6])
+                school_name.append(school_name_html)
+                roll.append(x[1])
+                name.append(x[2])
+                gender.append(x[3])
+                father.append(x[4])
+                dob.append(x[5])
                 reasion_.append('')
 
             download_data = {
