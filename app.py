@@ -200,16 +200,16 @@ def view_data():
             wb = load_workbook(excel_filename)
             ws = wb.active
             ws.column_dimensions['A'].width = 5 #စဉ်
-            ws.column_dimensions['B'].width = 20 #ကျောင်းအမည်
-            ws.column_dimensions['C'].width = 20 #ကျောင်းဝင်အမှတ်
-            ws.column_dimensions['D'].width = 25 #နာမည်
-            ws.column_dimensions['E'].width = 10 #ကျားမ
-            ws.column_dimensions['F'].width = 20 #အဖေနာမည်
-            ws.column_dimensions['G'].width = 15 #မွေးနေ့
+            ws.column_dimensions['B'].width = 18 #ကျောင်းအမည်
+            ws.column_dimensions['C'].width = 18 #ကျောင်းဝင်အမှတ်
+            ws.column_dimensions['D'].width = 24 #နာမည်
+            ws.column_dimensions['E'].width = 8 #ကျားမ
+            ws.column_dimensions['F'].width = 24 #အဖေနာမည်
+            ws.column_dimensions['G'].width = 13 #မွေးနေ့
             ws.column_dimensions['H'].width = 15 #အကြောင်းအရာ
 
             for row in ws.iter_rows():
-                ws.row_dimensions[row[0].row].height = 10
+                ws.row_dimensions[row[0].row].height = 20
             
             for cell in ws[1]:
                 cell.alignment = Alignment(horizontal='center', vertical='center')
