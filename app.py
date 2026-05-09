@@ -224,9 +224,6 @@ def view_data():
                 row[6].alignment = Alignment(horizontal='center', vertical='center')  #မွေးနေ့
                 row[7].alignment = Alignment(horizontal='left', vertical='center')    #အကြောင်းအရာ
 
-            wb = load_workbook(excel_filename)
-            ws = wb.active
-            
             thick = Side(style='thick')
             border = Border(
                 left=thick,
