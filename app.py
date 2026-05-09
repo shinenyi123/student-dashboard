@@ -224,7 +224,7 @@ def view_data():
                 row[6].alignment = Alignment(horizontal='center', vertical='center')  #မွေးနေ့
                 row[7].alignment = Alignment(horizontal='left', vertical='center')    #အကြောင်းအရာ
 
-            thick = Side(style='thick')
+            thick = Side(style='thin')
             border = Border(
                 left=thick,
                 right=thick,
