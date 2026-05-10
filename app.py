@@ -280,7 +280,7 @@ def view_data():
                 ws.row_dimensions[row[0].row].height = 22
 
             for row in ws.iter_rows(min_row=5):
-                ws.row_dimensions[row[0].row].height = 19.5
+                ws.row_dimensions[row[0].row].height = 19.7
 
             for row in ws.iter_rows(min_row=6):
 
