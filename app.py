@@ -266,14 +266,14 @@ def view_data():
             ws.column_dimensions['A'].width = 6  #စဉ်
             ws.column_dimensions['B'].width = 14 #ကျောင်းအမည်
             ws.column_dimensions['C'].width = 18 #ကျောင်းဝင်အမှတ်
-            ws.column_dimensions['D'].width = 23 #အမည်
+            ws.column_dimensions['D'].width = 24 #အမည်
             ws.column_dimensions['E'].width = 8  #ကျား/မ
-            ws.column_dimensions['F'].width = 23 #အဖေအမည်
+            ws.column_dimensions['F'].width = 24 #အဖေအမည်
             ws.column_dimensions['G'].width = 15 #မွေးနေ့
-            ws.column_dimensions['H'].width = 18 #မှတ်ချက်
+            ws.column_dimensions['H'].width = 19 #မှတ်ချက်
 
             for row in ws.iter_rows():
-                ws.row_dimensions[row[0].row].height = 22
+                ws.row_dimensions[row[0].row].height = 21.5
 
             for row in ws.iter_rows(min_row=6):
 
