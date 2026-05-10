@@ -146,14 +146,14 @@ def view_data():
             df.to_excel(excel_filename, index=False)
             wb = load_workbook(excel_filename)
             ws = wb.active
-            ws.column_dimensions['A'].width = 3 #စဉ်
-            ws.column_dimensions['B'].width = 17 #ကျောင်းဝင်အမှတ်
-            ws.column_dimensions['C'].width = 20 #နာမည်
-            ws.column_dimensions['D'].width = 6 #ကျားမ
-            ws.column_dimensions['E'].width = 20 #အဖေနာမည်
-            ws.column_dimensions['F'].width = 15 #မွေးနေ့
-            ws.column_dimensions['G'].width = 6 #class
-            ws.column_dimensions['H'].width = 6 #အသက်
+            ws.column_dimensions['A'].width = 6  #စဉ်
+            ws.column_dimensions['B'].width = 14 #ကျောင်းဝင်အမှတ်
+            ws.column_dimensions['C'].width = 26 #အမည်
+            ws.column_dimensions['D'].width = 8 #ကျား/မ
+            ws.column_dimensions['E'].width = 26  #အ‌ဖေနာမည်
+            ws.column_dimensions['F'].width = 12 #မွေးနေ့
+            ws.column_dimensions['G'].width = 5 #class
+            ws.column_dimensions['H'].width = 5 #အသက်
 
             for row in ws.iter_rows():
                 ws.row_dimensions[row[0].row].height = 20
@@ -280,7 +280,7 @@ def view_data():
                 ws.row_dimensions[row[0].row].height = 23
 
             for row in ws.iter_rows(min_row=5):
-                ws.row_dimensions[row[0].row].height = 19.4
+                ws.row_dimensions[row[0].row].height = 19.5
 
             for row in ws.iter_rows():
                 for cell in row:
