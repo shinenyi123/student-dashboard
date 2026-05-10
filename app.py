@@ -201,30 +201,6 @@ def view_data():
             df.to_excel(excel_filename, index=False)
             wb = load_workbook(excel_filename)
             ws = wb.active
-            ws.column_dimensions['A'].width = 6 #စဉ်
-            ws.column_dimensions['B'].width = 14 #ကျောင်းအမည်
-            ws.column_dimensions['C'].width = 18 #ကျောင်းဝင်အမှတ်
-            ws.column_dimensions['D'].width = 20 #အမည်
-            ws.column_dimensions['E'].width = 8 #ကျား/မ
-            ws.column_dimensions['F'].width = 20 #အဖေအမည်
-            ws.column_dimensions['G'].width = 15 #မွေးသက္ကရာဇ်
-            ws.column_dimensions['H'].width = 15 #မှတ်ချက်
-
-            for row in ws.iter_rows():
-                ws.row_dimensions[row[0].row].height = 20
-            
-            for cell in ws[1]:
-                cell.alignment = Alignment(horizontal='center', vertical='center')
-            
-            for row in ws.iter_rows(min_row=2):
-                row[0].alignment = Alignment(horizontal='center', vertical='center')  #စဉ်
-                row[1].alignment = Alignment(horizontal='left', vertical='center')    #ကျောင်းအမည်
-                row[2].alignment = Alignment(horizontal='center', vertical='center')  #ကျောင်းဝင်အမှတ်
-                row[3].alignment = Alignment(horizontal='left', vertical='center')    #အမည်
-                row[4].alignment = Alignment(horizontal='center', vertical='center')  #ကျား/မ
-                row[5].alignment = Alignment(horizontal='left', vertical='center')    #အဖေအမည်
-                row[6].alignment = Alignment(horizontal='center', vertical='center')  #မွေးသက္ကရာဇ်
-                row[7].alignment = Alignment(horizontal='left', vertical='center')    #မှတ်ချက်
 
             thick = Side(style='thin')
             border = Border(
@@ -290,9 +266,6 @@ def view_data():
 
                 cell.fill = header_fill
 
-            # =========================
-            # COLUMN WIDTH
-            # =========================
             ws.column_dimensions['A'].width = 6
             ws.column_dimensions['B'].width = 14
             ws.column_dimensions['C'].width = 18
@@ -302,15 +275,9 @@ def view_data():
             ws.column_dimensions['G'].width = 15
             ws.column_dimensions['H'].width = 15
 
-            # =========================
-            # ROW HEIGHT
-            # =========================
             for row in ws.iter_rows():
                 ws.row_dimensions[row[0].row].height = 20
 
-            # =========================
-            # ALIGNMENT
-            # =========================
             for row in ws.iter_rows(min_row=6):
 
                 row[0].alignment = Alignment(horizontal='center', vertical='center')
