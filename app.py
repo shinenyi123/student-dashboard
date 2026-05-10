@@ -147,13 +147,13 @@ def view_data():
             wb = load_workbook(excel_filename)
             ws = wb.active
             ws.column_dimensions['A'].width = 6  #စဉ်
-            ws.column_dimensions['B'].width = 14 #ကျောင်းဝင်အမှတ်
+            ws.column_dimensions['B'].width = 18 #ကျောင်းဝင်အမှတ်
             ws.column_dimensions['C'].width = 26 #အမည်
             ws.column_dimensions['D'].width = 8 #ကျား/မ
             ws.column_dimensions['E'].width = 26  #အ‌ဖေနာမည်
             ws.column_dimensions['F'].width = 12 #မွေးနေ့
-            ws.column_dimensions['G'].width = 5 #class
-            ws.column_dimensions['H'].width = 5 #အသက်
+            ws.column_dimensions['G'].width = 8 #class
+            ws.column_dimensions['H'].width = 8 #အသက်
 
             for row in ws.iter_rows():
                 ws.row_dimensions[row[0].row].height = 20
