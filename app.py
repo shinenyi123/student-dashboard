@@ -282,6 +282,19 @@ def view_data():
             for row in ws.iter_rows(min_row=5):
                 ws.row_dimensions[row[0].row].height = 19.7
 
+            for row in ws.iter_rows():
+                for cell in row:
+                    cell.font = Font(
+                        name='Pyidaungsu',
+                        size=11
+                    )
+            for row in ws.iter_rows(min_row=5):
+                for cell in row:
+                    cell.font = Font(
+                        name='Pyidaungsu',
+                        size=13
+                    )            
+
             for row in ws.iter_rows(min_row=6):
 
                 row[0].alignment = Alignment(horizontal='center', vertical='center')
