@@ -286,13 +286,14 @@ def view_data():
                 for cell in row:
                     cell.font = Font(
                         name='Pyidaungsu',
-                        size=11
+                        size=13,
+                        bold=True
                     )
             for row in ws.iter_rows(min_row=5):
                 for cell in row:
                     cell.font = Font(
                         name='Pyidaungsu',
-                        size=13
+                        size=11
                     )            
 
             for row in ws.iter_rows(min_row=6):
