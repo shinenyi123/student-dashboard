@@ -246,6 +246,11 @@ def view_data():
                     size=14
                 )
 
+            ws['H1'].font = Font(
+                bold=True,
+                size=14
+            )
+
             header_fill = PatternFill(
                 start_color="D9EAD3",
                 end_color="D9EAD3",
