@@ -277,7 +277,7 @@ def view_data():
             ws.column_dimensions['H'].width = 20 #မှတ်ချက်
 
             for row in ws.iter_rows():
-                ws.row_dimensions[row[0].row].height = 21
+                ws.row_dimensions[row[0].row].height = 19
 
             for row in ws.iter_rows(min_row=6):
 
@@ -299,9 +299,13 @@ def view_data():
                 bottom=thin
             )
 
-            for row in ws.iter_rows():
+            for row in ws.iter_rows(min_row=4):
                 for cell in row:
                     cell.border = border
+
+            for row in ws[4]:
+                for cell in row:
+                    cell
 
             ws.freeze_panes = 'A6'
 
@@ -320,7 +324,7 @@ def view_data():
             ws.print_options.horizontalCentered = True
 
             data_start_row = 5      # data starts at row 6
-            rows_per_page = 20
+            rows_per_page = 22
 
             current_row = data_start_row + rows_per_page
 
