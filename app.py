@@ -277,7 +277,7 @@ def view_data():
             ws.column_dimensions['H'].width = 20 #မှတ်ချက်
 
             for row in ws.iter_rows():
-                ws.row_dimensions[row[0].row].height = 19
+                ws.row_dimensions[row[0].row].height = 20
 
             for row in ws.iter_rows(min_row=6):
 
@@ -299,7 +299,7 @@ def view_data():
                 bottom=thin
             )
 
-            for row in ws.iter_rows(min_row=4):
+            for row in ws.iter_rows(min_row=5):
                 for cell in row:
                     cell.border = border
 
