@@ -226,7 +226,7 @@ def view_data():
             ws['A3'] = "ရန်ကုန်တိုင်းဒေသကြီးအင်းစိန်ခရိုင်လှိုင်သာယာ(အနောက်ပိုင်း)မြို့နယ်"
             ws['A4'] = "၂၀၂၆ - ၂၀၂၇ ပညာသင်နှစ်၊ အခြေခံပညာ မူလတန်းအဆင့် Grade5 စာမေးပွဲဖြေဆိုသူစာရင်းပေါင်းချုပ်"
 
-            ws.merge_cells('A2:H1')
+            ws.merge_cells('A1:H1')
             ws.merge_cells('A2:H2')
             ws.merge_cells('A3:H3')
             ws.merge_cells('A4:H4')
@@ -273,7 +273,7 @@ def view_data():
             ws.column_dimensions['H'].width = 20 #မှတ်ချက်
 
             for row in ws.iter_rows():
-                ws.row_dimensions[row[0].row].height = 21
+                ws.row_dimensions[row[0].row].height = 22
 
             for row in ws.iter_rows(min_row=6):
 
