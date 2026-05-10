@@ -266,14 +266,14 @@ def view_data():
 
                 cell.fill = header_fill
 
-            ws.column_dimensions['A'].width = 6
-            ws.column_dimensions['B'].width = 14
-            ws.column_dimensions['C'].width = 18
-            ws.column_dimensions['D'].width = 20
-            ws.column_dimensions['E'].width = 8
-            ws.column_dimensions['F'].width = 20
-            ws.column_dimensions['G'].width = 15
-            ws.column_dimensions['H'].width = 15
+            ws.column_dimensions['A'].width = 6  #စဉ်
+            ws.column_dimensions['B'].width = 14 #ကျောင်းအမည်
+            ws.column_dimensions['C'].width = 18 #ကျောင်းဝင်အမှတ်
+            ws.column_dimensions['D'].width = 23 #အမည်
+            ws.column_dimensions['E'].width = 8  #ကျား/မ
+            ws.column_dimensions['F'].width = 23 #အဖေအမည်
+            ws.column_dimensions['G'].width = 15 #မွေးနေ့
+            ws.column_dimensions['H'].width = 18 #မှတ်ချက်
 
             for row in ws.iter_rows():
                 ws.row_dimensions[row[0].row].height = 20
