@@ -303,10 +303,6 @@ def view_data():
                 for cell in row:
                     cell.border = border
 
-            for row in ws[4]:
-                for cell in row:
-                    cell
-
             ws.freeze_panes = 'A6'
 
             ws.page_setup.paperSize = ws.PAPERSIZE_A4
