@@ -247,9 +247,6 @@ def view_data():
                     size=14
                 )
 
-            # =========================
-            # TABLE HEADER STYLE
-            # =========================
             header_fill = PatternFill(
                 start_color="D9EAD3",
                 end_color="D9EAD3",
@@ -276,7 +273,7 @@ def view_data():
             ws.column_dimensions['H'].width = 18 #မှတ်ချက်
 
             for row in ws.iter_rows():
-                ws.row_dimensions[row[0].row].height = 20
+                ws.row_dimensions[row[0].row].height = 22
 
             for row in ws.iter_rows(min_row=6):
 
@@ -319,7 +316,7 @@ def view_data():
             ws.print_options.horizontalCentered = True
 
             data_start_row = 6      # data starts at row 6
-            rows_per_page = 21
+            rows_per_page = 20
 
             current_row = data_start_row + rows_per_page
 
