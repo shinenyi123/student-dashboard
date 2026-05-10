@@ -273,7 +273,7 @@ def view_data():
             ws.column_dimensions['H'].width = 20 #မှတ်ချက်
 
             for row in ws.iter_rows():
-                ws.row_dimensions[row[0].row].height = 22
+                ws.row_dimensions[row[0].row].height = 21
 
             for row in ws.iter_rows(min_row=6):
 
