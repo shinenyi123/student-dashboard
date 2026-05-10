@@ -315,7 +315,7 @@ def view_data():
 
             ws.print_options.horizontalCentered = True
 
-            data_start_row = 6      # data starts at row 6
+            data_start_row = 5      # data starts at row 6
             rows_per_page = 20
 
             current_row = data_start_row + rows_per_page
