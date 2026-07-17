@@ -186,6 +186,9 @@
             <form method="POST" action="{{ url_for('view_data') }}">
 
                 <!-- Age inputs -->
+                <div>
+                    <input type="date" name="date" value="{{ date or '' }}" placeholder="Date(day-month-year)">
+                </div>
                 <div class="age-inputs">
                     <input type="number" name="age" value="{{ age or '' }}" placeholder="Age (single)">
                     <input type="number" name="age_1" value="{{ age_1 or '' }}" placeholder="Min">
@@ -199,6 +202,7 @@
                     <option value="s2" {% if class_html == 's2' %}selected{% endif %}>S2</option>
                     <option value="s3" {% if class_html == 's3' %}selected{% endif %}>S3</option>
                     <option value="s4" {% if class_html == 's4' %}selected{% endif %}>S4</option>
+                    <option value="s5" {% if class_html == 's5' %}selected{% endif %}>S5</option>
                 </select>
 
                 <!-- Gender -->
