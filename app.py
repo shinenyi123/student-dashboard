@@ -6,6 +6,7 @@ from openpyxl.worksheet.pagebreak import Break
 from datetime import datetime
 from flask import Flask, render_template, redirect, url_for ,request,send_file
 import sqlite3 
+from dateutil.relativedelta import relativedelta
 import pandas as pd 
 
 app = Flask(__name__)   
@@ -33,11 +34,23 @@ def create_table():
 
 create_table()
 
-def calculate_age(dob_str):
+def calculate_age_avg(dob_str, date):
     dob = datetime.strptime(dob_str, "%d-%m-%Y")
-    today = datetime.today()
-    age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
-    return age
+    target_date = datetime.strptime(date, "%Y-%m-%d")
+    check_date = target_date - relativedelta(months=6)
+    age = check_date.year - dob.year
+
+    if (check_date.month, check_date.day) < (dob.month, dob.day):
+        age -= 1
+
+    return age + 1
+
+def calculate_age(dob_str,date):
+     dob = datetime.strptime(dob_str, "%d-%m-%Y") 
+     target_date = datetime.strptime(date, "%Y-%m-%d") 
+     age = target_date.year - dob.year - ((target_date.month, target_date.day) < (dob.month, dob.day)) 
+     
+     return age
 
 def apply_filters(data_age, class_html, gender_html, age_html, age_html_1, age_html_2):
     data = data_age
@@ -105,28 +118,60 @@ def view_data():
     file_type = request.form.get('file_type')
     school_name_html = request.form.get('school_name')
     action_html = request.form.get('on')
-
-    conn = sqlite3.connect(DATABASE_PATH, timeout=10)
-    cursor = conn.cursor()
-    cursor.execute("SELECT စဉ်, ကျောင်းဝင်အမှတ်, နာမည်, ကျားမ, အဖေနာမည်, မွေးနေ့ ,class FROM students")
-    rows = cursor.fetchall()
-    conn.close()
-    
-    data_age = []
-    for row in rows:
-        no, roll, name, gender, father, dob, class_name = row
-        age = calculate_age(dob)
-        data_age.append((no, roll, name, gender, father, dob, class_name, age))
-
-    data = apply_filters(data_age, class_html, gender_html, age_html, age_html_1, age_html_2)
+    date = request.form.get('date')
 
     if action_html == 'run':
+        if age_html == '' and age_html_1 == '' and age_html_2 == '':
+            conn = sqlite3.connect(DATABASE_PATH, timeout=10)
+            cursor = conn.cursor()
+            cursor.execute("SELECT စဉ်, ကျောင်းဝင်အမှတ်, နာမည်, ကျားမ, အဖေနာမည်, မွေးနေ့ ,class FROM students")
+            rows = cursor.fetchall()
+            conn.close()
+            
+            data_age = []
+            for row in rows:
+                no, roll, name, gender, father, dob, class_name = row
+                age = calculate_age_avg(dob, date)
+                data_age.append((no, roll, name, gender, father, dob, class_name, age))
+
+            data = apply_filters(data_age, class_html, gender_html, age_html, age_html_1, age_html_2)
+        elif age_html != '':
+            conn = sqlite3.connect(DATABASE_PATH, timeout=10)
+            cursor = conn.cursor()
+            cursor.execute("SELECT စဉ်, ကျောင်းဝင်အမှတ်, နာမည်, ကျားမ, အဖေနာမည်, မွေးနေ့ ,class FROM students")
+            rows = cursor.fetchall()
+            conn.close()
+            
+            data_age = []
+            for row in rows:
+                no, roll, name, gender, father, dob, class_name = row
+                age = calculate_age_avg(dob, date)
+                data_age.append((no, roll, name, gender, father, dob, class_name, age))
+
+            data = apply_filters(data_age, class_html, gender_html, age_html, age_html_1, age_html_2)
+
+        elif age_html_1 != '' or age_html_2 != '':
+            conn = sqlite3.connect(DATABASE_PATH, timeout=10)
+            cursor = conn.cursor()
+            cursor.execute("SELECT စဉ်, ကျောင်းဝင်အမှတ်, နာမည်, ကျားမ, အဖေနာမည်, မွေးနေ့ ,class FROM students")
+            rows = cursor.fetchall()
+            conn.close()
+            
+            data_age = []
+            for row in rows:
+                no, roll, name, gender, father, dob, class_name = row
+                age = calculate_age(dob, date)
+                data_age.append((no, roll, name, gender, father, dob, class_name, age))
+
+            data = apply_filters(data_age, class_html, gender_html, age_html, age_html_1, age_html_2)
+
         return render_template('try.html', data=data,
                                data_male=len([r for r in data if r[3] == 'ကျား']),
                                data_female=len([r for r in data if r[3] == 'မ']),
                                data_all=len(data),
                                age=age_html, age_1=age_html_1, age_2=age_html_2,
-                               class_html=class_html, gender=gender_html)
+                               class_html=class_html, gender=gender_html, date=date)
+    
     elif action_html == 'excel_download':
         if file_type == 'normal':
             download_data = [
@@ -230,9 +275,6 @@ def view_data():
             ws.merge_cells('A3:H3')
             ws.merge_cells('A4:H4')
 
-            # =========================
-            # HEADER STYLE
-            # =========================
             for row in range(1, 5):
                 cell = ws[f'A{row}']
 
@@ -249,6 +291,10 @@ def view_data():
             ws['H1'].font = Font(
                 bold=True,
                 size=13
+            )
+            ws['H1'].alignment = Alignment(
+                horizontal='center',
+                vertical='center'
             )
 
             header_fill = PatternFill(
@@ -280,7 +326,7 @@ def view_data():
                 ws.row_dimensions[row[0].row].height = 23
 
             for row in ws.iter_rows(min_row=5):
-                ws.row_dimensions[row[0].row].height = 19.5
+                ws.row_dimensions[row[0].row].height = 19.4
 
             for row in ws.iter_rows():
                 for cell in row:
@@ -350,5 +396,5 @@ def view_data():
 
     return render_template('try.html')
 
-if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+if __name__ == "__main__":
+    app.run(debug=True)
