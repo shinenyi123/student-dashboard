@@ -17,6 +17,7 @@
 
         /* 🔹 Top bar */
         .top-bar {
+            height: 17px;
             background: #2f3640;
             color: white;
             padding: 15px;
@@ -25,6 +26,8 @@
         }
 
         .button-bar {
+            min-height: 100px;
+            max-height: 100px;
             background: white;
             padding: 15px;
         }
@@ -38,7 +41,8 @@
         /* 🔹 Left panel */
         .filter-panel {
             width: 25%;
-            min-height: 420px;
+            min-height: 410px;
+            max-height: 410px;
             background: white;
             padding: 20px;
             border-radius: 10px;
@@ -53,7 +57,7 @@
         }
 
         .table-container {
-            max-height: 393px;
+            max-height: 373px;
             overflow-y: auto;
             border-radius: 10px;
         }
@@ -187,7 +191,7 @@
         <div class="main">
             <!-- 🔹 Filter Panel -->
             <div class="filter-panel">
-                <form method="POST" action="{{ url_for('view_data') }}">
+                <form method="post" action="{{ url_for('view_data') }}">
 
                     <!-- Age inputs -->
                     <div>
@@ -222,8 +226,8 @@
                         <option value="normal">Normal File</option>
                         <option value="normalized">Normalized File</option>
                     </select>
-                    <input type="text" name="school_name" placeholder="School Name">
-                    <input type="text" name="file_name" placeholder="File Name">
+                    <input type="text" name="school_name" placeholder="School Name" style="height: 10px;">
+                    <input type="text" name="file_name" style="height: 10px;" placeholder="File Name">
                     <button type="submit" name="on" value="excel_download">Download Excel</button>
                 </form>
             </div>
@@ -281,7 +285,7 @@
         <div class="button-bar">
             <form action="/insert" method="post" enctype="multipart/form-data">
                 <input type="file" name="myfile">
-                <button type="submit" style="width: 16.2%; height: 50px;">Upload</button>
+                <button type="submit" style="width: 16.2%; height: 35px;">Upload</button>
             </form>
 
         </div>
