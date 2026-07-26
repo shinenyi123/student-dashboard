@@ -1,10 +1,11 @@
 import os
+from io import BytesIO  
 from openpyxl import load_workbook
-from openpyxl.styles import Alignment,Border, Side, Font, PatternFill
+from openpyxl.styles import Alignment, Border, Side, Font, PatternFill
 from openpyxl.worksheet.page import PageMargins
 from openpyxl.worksheet.pagebreak import Break
 from datetime import datetime
-from flask import Flask, render_template, redirect, url_for ,request,send_file
+from flask import Flask, render_template, redirect, url_for, request, send_file
 import sqlite3 
 from dateutil.relativedelta import relativedelta
 import pandas as pd 
@@ -46,11 +47,11 @@ def calculate_age_avg(dob_str, date):
     return age + 1
 
 def calculate_age(dob_str,date):
-     dob = datetime.strptime(dob_str, "%d-%m-%Y") 
-     target_date = datetime.strptime(date, "%Y-%m-%d") 
-     age = target_date.year - dob.year - ((target_date.month, target_date.day) < (dob.month, dob.day)) 
+    dob = datetime.strptime(dob_str, "%d-%m-%Y") 
+    target_date = datetime.strptime(date, "%Y-%m-%d") 
+    age = target_date.year - dob.year - ((target_date.month, target_date.day) < (dob.month, dob.day)) 
      
-     return age
+    return age
 
 def apply_filters(data_age, class_html, gender_html, age_html, age_html_1, age_html_2):
     data = data_age
@@ -64,11 +65,33 @@ def apply_filters(data_age, class_html, gender_html, age_html, age_html_1, age_h
         data = [row for row in data if int(age_html_1) <= int(row[7]) <= int(age_html_2)]
     return data
 
+
+def get_filtered_student_data(date, age_html, age_html_1, age_html_2, class_html, gender_html):
+    conn = sqlite3.connect(DATABASE_PATH, timeout=10)
+    cursor = conn.cursor()
+    cursor.execute("SELECT စဉ်, ကျောင်းဝင်အမှတ်, နာမည်, ကျားမ, အဖေနာမည်, မွေးနေ့, class FROM students")
+    rows = cursor.fetchall()
+    conn.close()
+
+    data_age = []
+    for row in rows:
+        no, roll, name, gender, father, dob, class_name = row
+        if age_html == '' and age_html_1 == '' and age_html_2 == '':
+            age = calculate_age_avg(dob, date)
+        elif age_html != '':
+            age = calculate_age_avg(dob, date)
+        else:
+            age = calculate_age(dob, date)
+        data_age.append((no, roll, name, gender, father, dob, class_name, age))
+
+    return apply_filters(data_age, class_html, gender_html, age_html, age_html_1, age_html_2)
+
+
 def eng_to_mm(number):
     eng_digits = ['0','1','2','3','4','5','6','7','8','9']
     mm_digits = ['၀','၁','၂','၃','၄','၅','၆','၇','၈','၉']
     number_list = []
-    for num in number:
+    for num in str(number):
         for eng,mm in zip(eng_digits,mm_digits):
             if num == mm:
                 number_list.append(num)
@@ -108,63 +131,22 @@ def insert_data():
     return redirect(url_for('home'))
 
 @app.route('/view_tb', methods=['POST'])
+@app.route('/view_data', methods=['POST'])
 def view_data():
     age_html = request.form.get('age')
     age_html_1 = request.form.get('age_1')
     age_html_2 = request.form.get('age_2')
     class_html = request.form.get('class')
     gender_html = request.form.get('gender')
-    filename   = request.form.get('file_name')
+    filename = request.form.get('file_name') or 'student_export'
     file_type = request.form.get('file_type')
-    school_name_html = request.form.get('school_name')
+    school_name_html = request.form.get('school_name') or ''
     action_html = request.form.get('on')
-    date = request.form.get('date')
+    date = request.form.get('date') or datetime.now().strftime('%Y-%m-%d')
+
+    data = get_filtered_student_data(date, age_html, age_html_1, age_html_2, class_html, gender_html)
 
     if action_html == 'run':
-        if age_html == '' and age_html_1 == '' and age_html_2 == '':
-            conn = sqlite3.connect(DATABASE_PATH, timeout=10)
-            cursor = conn.cursor()
-            cursor.execute("SELECT စဉ်, ကျောင်းဝင်အမှတ်, နာမည်, ကျားမ, အဖေနာမည်, မွေးနေ့ ,class FROM students")
-            rows = cursor.fetchall()
-            conn.close()
-            
-            data_age = []
-            for row in rows:
-                no, roll, name, gender, father, dob, class_name = row
-                age = calculate_age_avg(dob, date)
-                data_age.append((no, roll, name, gender, father, dob, class_name, age))
-
-            data = apply_filters(data_age, class_html, gender_html, age_html, age_html_1, age_html_2)
-        elif age_html != '':
-            conn = sqlite3.connect(DATABASE_PATH, timeout=10)
-            cursor = conn.cursor()
-            cursor.execute("SELECT စဉ်, ကျောင်းဝင်အမှတ်, နာမည်, ကျားမ, အဖေနာမည်, မွေးနေ့ ,class FROM students")
-            rows = cursor.fetchall()
-            conn.close()
-            
-            data_age = []
-            for row in rows:
-                no, roll, name, gender, father, dob, class_name = row
-                age = calculate_age_avg(dob, date)
-                data_age.append((no, roll, name, gender, father, dob, class_name, age))
-
-            data = apply_filters(data_age, class_html, gender_html, age_html, age_html_1, age_html_2)
-
-        elif age_html_1 != '' or age_html_2 != '':
-            conn = sqlite3.connect(DATABASE_PATH, timeout=10)
-            cursor = conn.cursor()
-            cursor.execute("SELECT စဉ်, ကျောင်းဝင်အမှတ်, နာမည်, ကျားမ, အဖေနာမည်, မွေးနေ့ ,class FROM students")
-            rows = cursor.fetchall()
-            conn.close()
-            
-            data_age = []
-            for row in rows:
-                no, roll, name, gender, father, dob, class_name = row
-                age = calculate_age(dob, date)
-                data_age.append((no, roll, name, gender, father, dob, class_name, age))
-
-            data = apply_filters(data_age, class_html, gender_html, age_html, age_html_1, age_html_2)
-
         return render_template('try.html', data=data,
                                data_male=len([r for r in data if r[3] == 'ကျား']),
                                data_female=len([r for r in data if r[3] == 'မ']),
@@ -173,6 +155,8 @@ def view_data():
                                class_html=class_html, gender=gender_html, date=date)
     
     elif action_html == 'excel_download':
+        output = BytesIO() 
+
         if file_type == 'normal':
             download_data = [
                 {
@@ -184,21 +168,25 @@ def view_data():
                     'မွေးနေ့': r[5],
                     'class': r[6],
                     'အသက်': r[7]
-                }for r in data 
+                } for r in data 
             ]
             df = pd.DataFrame(download_data)
-            excel_filename = filename + '.xlsx'
-            df.to_excel(excel_filename, index=False)
-            wb = load_workbook(excel_filename)
+            
+            with pd.ExcelWriter(output, engine='openpyxl') as writer:
+                df.to_excel(writer, index=False)
+            
+            output.seek(0)
+            wb = load_workbook(output)
             ws = wb.active
-            ws.column_dimensions['A'].width = 6  #စဉ်
-            ws.column_dimensions['B'].width = 18 #ကျောင်းဝင်အမှတ်
-            ws.column_dimensions['C'].width = 26 #အမည်
-            ws.column_dimensions['D'].width = 8 #ကျား/မ
-            ws.column_dimensions['E'].width = 26  #အ‌ဖေနာမည်
-            ws.column_dimensions['F'].width = 12 #မွေးနေ့
-            ws.column_dimensions['G'].width = 8 #class
-            ws.column_dimensions['H'].width = 8 #အသက်
+
+            ws.column_dimensions['A'].width = 6  # စဉ်
+            ws.column_dimensions['B'].width = 18 # ကျောင်းဝင်အမှတ်
+            ws.column_dimensions['C'].width = 26 # အမည်
+            ws.column_dimensions['D'].width = 8  # ကျား/မ
+            ws.column_dimensions['E'].width = 26 # အ‌ဖေနာမည်
+            ws.column_dimensions['F'].width = 12 # မွေးနေ့
+            ws.column_dimensions['G'].width = 8  # class
+            ws.column_dimensions['H'].width = 8  # အသက်
 
             for row in ws.iter_rows():
                 ws.row_dimensions[row[0].row].height = 20
@@ -207,18 +195,26 @@ def view_data():
                 cell.alignment = Alignment(horizontal='center', vertical='center')
             
             for row in ws.iter_rows(min_row=2):
-                row[0].alignment = Alignment(horizontal='center', vertical='center') #စဉ်
-                row[1].alignment = Alignment(horizontal='center', vertical='center') #ကျောင်းဝင်အမှတ်
-                row[2].alignment = Alignment(horizontal='left', vertical='center')  #နာမည်
-                row[3].alignment = Alignment(horizontal='center', vertical='center') #ကျားမ
-                row[4].alignment = Alignment(horizontal='left', vertical='center')  #အဖေနာမည်
-                row[5].alignment = Alignment(horizontal='center', vertical='center') #မွေးနေ့
-                row[6].alignment = Alignment(horizontal='center', vertical='center') #class
-                row[7].alignment = Alignment(horizontal='center', vertical='center') #အသက်
+                row[0].alignment = Alignment(horizontal='center', vertical='center')
+                row[1].alignment = Alignment(horizontal='center', vertical='center')
+                row[2].alignment = Alignment(horizontal='left', vertical='center')
+                row[3].alignment = Alignment(horizontal='center', vertical='center')
+                row[4].alignment = Alignment(horizontal='left', vertical='center')
+                row[5].alignment = Alignment(horizontal='center', vertical='center')
+                row[6].alignment = Alignment(horizontal='center', vertical='center')
+                row[7].alignment = Alignment(horizontal='center', vertical='center')
 
-            wb.save(excel_filename)
+            final_output = BytesIO()
+            wb.save(final_output)
+            final_output.seek(0)
 
-            return send_file(excel_filename, as_attachment=True)
+            return send_file(
+                final_output,
+                as_attachment=True,
+                download_name=f"{filename}.xlsx",
+                mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            )
+
         elif file_type == 'normalized':
             no, school_name, roll, name, gender, father, dob, reasion_ = [], [], [], [], [], [], [], []
             for x in data:
@@ -242,25 +238,22 @@ def view_data():
                 'မှတ်ချက်': reasion_
             }
             df = pd.DataFrame(download_data)
-            excel_filename = filename + '_normalized.xlsx'
-            df.to_excel(excel_filename, index=False)
-            wb = load_workbook(excel_filename)
+            
+            with pd.ExcelWriter(output, engine='openpyxl') as writer:
+                df.to_excel(writer, index=False)
+
+            output.seek(0)
+            wb = load_workbook(output)
             ws = wb.active
 
             thick = Side(style='thin')
-            border = Border(
-                left=thick,
-                right=thick,
-                top=thick,
-                bottom=thick
-            )
+            border = Border(left=thick, right=thick, top=thick, bottom=thick)
 
             for row in ws.iter_rows():
                 for cell in row:
                     cell.border = border
 
             bold_font = Font(bold=True)
-
             for cell in ws[1]:
                 cell.font = bold_font
 
@@ -277,73 +270,43 @@ def view_data():
 
             for row in range(1, 5):
                 cell = ws[f'A{row}']
+                cell.alignment = Alignment(horizontal='center', vertical='center')
+                cell.font = Font(bold=True, size=13)
 
-                cell.alignment = Alignment(
-                    horizontal='center',
-                    vertical='center'
-                )
+            ws['H1'].font = Font(bold=True, size=13)
+            ws['H1'].alignment = Alignment(horizontal='center', vertical='center')
 
-                cell.font = Font(
-                    bold=True,
-                    size=13
-                )
-
-            ws['H1'].font = Font(
-                bold=True,
-                size=13
-            )
-            ws['H1'].alignment = Alignment(
-                horizontal='center',
-                vertical='center'
-            )
-
-            header_fill = PatternFill(
-                start_color="D9EAD3",
-                end_color="D9EAD3",
-                fill_type="solid"
-            )
+            header_fill = PatternFill(start_color="D9EAD3", end_color="D9EAD3", fill_type="solid")
 
             for cell in ws[5]:
                 cell.font = Font(bold=True)
-
-                cell.alignment = Alignment(
-                    horizontal='center',
-                    vertical='center'
-                )
-
+                cell.alignment = Alignment(horizontal='center', vertical='center')
                 cell.fill = header_fill
 
-            ws.column_dimensions['A'].width = 6  #စဉ်
-            ws.column_dimensions['B'].width = 14 #ကျောင်းအမည်
-            ws.column_dimensions['C'].width = 18 #ကျောင်းဝင်အမှတ်
-            ws.column_dimensions['D'].width = 26 #အမည်
-            ws.column_dimensions['E'].width = 8  #ကျား/မ
-            ws.column_dimensions['F'].width = 26 #အဖေအမည်
-            ws.column_dimensions['G'].width = 15 #မွေးနေ့
-            ws.column_dimensions['H'].width = 22 #မှတ်ချက်
+            ws.column_dimensions['A'].width = 6   # စဉ်
+            ws.column_dimensions['B'].width = 14  # ကျောင်းအမည်
+            ws.column_dimensions['C'].width = 18  # ကျောင်းဝင်အမှတ်
+            ws.column_dimensions['D'].width = 26  # အမည်
+            ws.column_dimensions['E'].width = 8   # ကျား/မ
+            ws.column_dimensions['F'].width = 26  # အဖေအမည်
+            ws.column_dimensions['G'].width = 15  # မွေးနေ့
+            ws.column_dimensions['H'].width = 22  # မှတ်ချက်
 
             for row in ws.iter_rows():
                 ws.row_dimensions[row[0].row].height = 23
 
             for row in ws.iter_rows(min_row=5):
-                ws.row_dimensions[row[0].row].height = 19.4
+                ws.row_dimensions[row[0].row].height = 18.5
 
             for row in ws.iter_rows():
                 for cell in row:
-                    cell.font = Font(
-                        name='Pyidaungsu',
-                        size=13,
-                        bold=True
-                    )
+                    cell.font = Font(name='Pyidaungsu', size=13, bold=True)
+                    
             for row in ws.iter_rows(min_row=5):
                 for cell in row:
-                    cell.font = Font(
-                        name='Pyidaungsu',
-                        size=11
-                    )            
+                    cell.font = Font(name='Pyidaungsu', size=11)            
 
             for row in ws.iter_rows(min_row=6):
-
                 row[0].alignment = Alignment(horizontal='center', vertical='center')
                 row[1].alignment = Alignment(horizontal='left', vertical='center')
                 row[2].alignment = Alignment(horizontal='center', vertical='center')
@@ -354,45 +317,38 @@ def view_data():
                 row[7].alignment = Alignment(horizontal='left', vertical='center')
 
             thin = Side(style='thin')
-
-            border = Border(
-                left=thin,
-                right=thin,
-                top=thin,
-                bottom=thin
-            )
+            border = Border(left=thin, right=thin, top=thin, bottom=thin)
 
             for row in ws.iter_rows(min_row=5):
                 for cell in row:
                     cell.border = border
 
             ws.freeze_panes = 'A6'
-
             ws.page_setup.paperSize = ws.PAPERSIZE_A4
             ws.page_setup.orientation = 'portrait'
 
-            ws.page_margins = PageMargins(
-                left=0.3,
-                right=0.3,
-                top=0.5,
-                bottom=0.5
-            )
-
+            ws.page_margins = PageMargins(left=0.3, right=0.3, top=0.5, bottom=0.5)
             ws.print_title_rows = '1:5'
-
             ws.print_options.horizontalCentered = True
 
-            data_start_row = 5      # data starts at row 6
+            data_start_row = 5
             rows_per_page = 22
-
             current_row = data_start_row + rows_per_page
 
             while current_row <= ws.max_row:
                 ws.row_breaks.append(Break(id=current_row))
                 current_row += rows_per_page
 
-            wb.save(excel_filename)
-            return send_file(excel_filename, as_attachment=True)
+            final_output = BytesIO()
+            wb.save(final_output)
+            final_output.seek(0)
+
+            return send_file(
+                final_output,
+                as_attachment=True,
+                download_name=f"{filename}_normalized.xlsx",
+                mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            )
 
     return render_template('try.html')
 
