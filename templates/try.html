@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Student Dashboard</title>
 
@@ -23,7 +24,7 @@
             font-size: 20px;
         }
 
-        .button-ber {
+        .button-bar {
             background: white;
             padding: 15px;
         }
@@ -43,14 +44,14 @@
             border-radius: 10px;
             margin-left: 2%;
         }
-        
+
         /* 🔹 Right panel */
         .table-panel {
             width: 70%;
             height: 70%;
             margin-left: 20px;
         }
-        
+
         .table-container {
             max-height: 393px;
             overflow-y: auto;
@@ -74,7 +75,9 @@
         }
 
         /* 🔹 Form */
-        input, select, button {
+        input,
+        select,
+        button {
             width: 100%;
             padding: 10px;
             margin-top: 10px;
@@ -100,7 +103,8 @@
             background: white;
         }
 
-        th, td {
+        th,
+        td {
             padding: 10px;
             border: 1px solid #ccc;
             text-align: center;
@@ -168,122 +172,123 @@
 
 <body>
 
-<div class="container">
+    <div class="container">
 
-    <!-- 🔹 Top -->
-    <div class="top-bar">
-        You Press The Button, We Do The Rest
-    </div>
+        <!-- 🔹 Top -->
+        <div class="top-bar">
+            You Press The Button, We Do The Rest
+        </div>
 
-    <!-- 🔹 Messages -->
-    {% if message %}
-    <div class="message {{ message_type }}">{{ message }}</div>
-    {% endif %}
+        <!-- 🔹 Messages -->
+        {% if message %}
+        <div class="message {{ message_type }}">{{ message }}</div>
+        {% endif %}
 
-    <div class="main">
-        <!-- 🔹 Filter Panel -->
-        <div class="filter-panel">
-            <form method="POST" action="{{ url_for('view_data') }}">
+        <div class="main">
+            <!-- 🔹 Filter Panel -->
+            <div class="filter-panel">
+                <form method="POST" action="{{ url_for('view_data') }}">
 
-                <!-- Age inputs -->
-                <div>
-                    <input type="date" name="date" value="{{ date or '' }}" placeholder="Date(day-month-year)">
+                    <!-- Age inputs -->
+                    <div>
+                        <input type="date" name="date" value="{{ date or '' }}" placeholder="Date(day-month-year)">
+                    </div>
+                    <div class="age-inputs">
+                        <input type="number" name="age" value="{{ age or '' }}" placeholder="Age (single)">
+                        <input type="number" name="age_1" value="{{ age_1 or '' }}" placeholder="Min">
+                        <input type="number" name="age_2" value="{{ age_2 or '' }}" placeholder="Max">
+                    </div>
+
+                    <!-- Class -->
+                    <select name="class">
+                        <option value="all" {% if class_html=='all' %}selected{% endif %}>All classes</option>
+                        <option value="s1" {% if class_html=='s1' %}selected{% endif %}>S1</option>
+                        <option value="s2" {% if class_html=='s2' %}selected{% endif %}>S2</option>
+                        <option value="s3" {% if class_html=='s3' %}selected{% endif %}>S3</option>
+                        <option value="s4" {% if class_html=='s4' %}selected{% endif %}>S4</option>
+                        <option value="s5" {% if class_html=='s5' %}selected{% endif %}>S5</option>
+                    </select>
+
+                    <!-- Gender -->
+                    <select name="gender">
+                        <option value="all" {% if gender=='all' %}selected{% endif %}>Male & Female</option>
+                        <option value="ကျား" {% if gender=='ကျား' %}selected{% endif %}>Male</option>
+                        <option value="မ" {% if gender=='မ' %}selected{% endif %}>Female</option>
+                    </select>
+
+                    <button type="submit" name="on" value="run">Run</button>
+                    <hr>
+                    <select name="file_type" id="">
+                        <option value="normal">Normal File</option>
+                        <option value="normalized">Normalized File</option>
+                    </select>
+                    <input type="text" name="school_name" placeholder="School Name">
+                    <input type="text" name="file_name" placeholder="File Name">
+                    <button type="submit" name="on" value="excel_download">Download Excel</button>
+                </form>
+            </div>
+
+            <!-- 🔹 Right Panel -->
+            <div class="table-panel">
+
+                <!-- 🔹 Summary -->
+                <div class="summary">
+                    <div class="box">All: {{ data_all }}</div>
+                    <div class="box">Male: {{ data_male }}</div>
+                    <div class="box">Female: {{ data_female }}</div>
                 </div>
-                <div class="age-inputs">
-                    <input type="number" name="age" value="{{ age or '' }}" placeholder="Age (single)">
-                    <input type="number" name="age_1" value="{{ age_1 or '' }}" placeholder="Min">
-                    <input type="number" name="age_2" value="{{ age_2 or '' }}" placeholder="Max">
+
+                <!-- 🔹 Table -->
+                <div class="table-container">
+                    {% if data %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>စဉ်</th>
+                                <th>ကျောင်းဝင်အမှတ်</th>
+                                <th>နာမည်</th>
+                                <th>ကျား/မ</th>
+                                <th>အဖေနာမည်</th>
+                                <th>မွေးနေ့</th>
+                                <th>အသက်</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in data %}
+                            <tr>
+                                <td>{{ row[0] }}</td>
+                                <td>{{ row[1] }}</td>
+                                <td>{{ row[2] }}</td>
+                                <td>{{ row[3] }}</td>
+                                <td>{{ row[4] }}</td>
+                                <td>{{ row[5] }}</td>
+                                <td>{{ row[7] }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="empty-state">
+                        <p>No student data found.</p>
+                        <p>Click "File Save" to import data from Excel.</p>
+                    </div>
+                    {% endif %}
                 </div>
+            </div>
 
-                <!-- Class -->
-                <select name="class">
-                    <option value="all" {% if class_html == 'all' %}selected{% endif %}>All classes</option>
-                    <option value="s1" {% if class_html == 's1' %}selected{% endif %}>S1</option>
-                    <option value="s2" {% if class_html == 's2' %}selected{% endif %}>S2</option>
-                    <option value="s3" {% if class_html == 's3' %}selected{% endif %}>S3</option>
-                    <option value="s4" {% if class_html == 's4' %}selected{% endif %}>S4</option>
-                    <option value="s5" {% if class_html == 's5' %}selected{% endif %}>S5</option>
-                </select>
+        </div>
 
-                <!-- Gender -->
-                <select name="gender">
-                    <option value="all" {% if gender == 'all' %}selected{% endif %}>Male & Female</option>
-                    <option value="ကျား" {% if gender == 'ကျား' %}selected{% endif %}>Male</option>
-                    <option value="မ" {% if gender == 'မ' %}selected{% endif %}>Female</option>
-                </select>
-
-                <button type="submit" name="on" value="run">Run</button>
-                <hr>
-                <select name="file_type" id="">
-                    <option value="normal">Normal File</option>
-                    <option value="normalized">Normalized File</option>
-                </select>
-                <input type="text" name="school_name" placeholder="School Name">
-                <input type="text" name="file_name" placeholder="File Name">
-                <button type="submit" name="on" value="excel_download">Download Excel</button>
+        <div class="button-bar">
+            <form action="/insert" method="post" enctype="multipart/form-data">
+                <input type="file" name="myfile">
+                <button type="submit" style="width: 16.2%; height: 50px;">Upload</button>
             </form>
+
         </div>
 
-        <!-- 🔹 Right Panel -->
-        <div class="table-panel">
-
-            <!-- 🔹 Summary -->
-            <div class="summary">
-                <div class="box">All: {{ data_all }}</div>
-                <div class="box">Male: {{ data_male }}</div>
-                <div class="box">Female: {{ data_female }}</div>
-            </div>
-
-            <!-- 🔹 Table -->
-            <div class="table-container">
-                {% if data %}
-                <table>
-                    <thead>
-                        <tr>
-                            <th>စဉ်</th>
-                            <th>ကျောင်းဝင်အမှတ်</th>
-                            <th>နာမည်</th>
-                            <th>ကျား/မ</th>
-                            <th>အဖေနာမည်</th>
-                            <th>မွေးနေ့</th>
-                            <th>အသက်</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for row in data %}
-                        <tr>
-                            <td>{{ row[0] }}</td>
-                            <td>{{ row[1] }}</td>
-                            <td>{{ row[2] }}</td>
-                            <td>{{ row[3] }}</td>
-                            <td>{{ row[4] }}</td>
-                            <td>{{ row[5] }}</td>
-                            <td>{{ row[7] }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                {% else %}
-                <div class="empty-state">
-                    <p>No student data found.</p>
-                    <p>Click "File Save" to import data from Excel.</p>
-                </div>
-                {% endif %}
-            </div>
-        </div>
 
     </div>
-    
-    <div class="button-ber">
-        <form action="/insert" method="post" enctype="multipart/form-data">
-            <input type="file" name="myfile">
-            <button type="submit" style="width: 16.2%; height: 50px;">Upload</button>
-        </form>
-
-    </div>
-
-
-</div>
 
 </body>
+
 </html>
